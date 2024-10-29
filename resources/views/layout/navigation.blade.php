@@ -22,11 +22,27 @@
                     </li>
                 @else
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                            {{ Auth::user()->name }}
+                        <a class="nav-link dropdown-toggle d-flex flex-row align-items-center" href="#" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (Auth::user()->photo)
+                                <img src="{{ asset('storage/images/users/thumbnail/' . Auth::user()->photo . '_Thumbnail.' . Auth::user()->photo_ext) }}"
+                                    alt="Avatar" class="rounded-circle border border-3 border-primary me-2" width="35"
+                                    height="35">
+                            @else
+                                <img src="{{ asset('storage/images/users/thumbnail/default.png') }}" alt="Avatar"
+                                    class="rounded-circle border border-3 border-primary me-2" width="35"
+                                    height="35">
+                            @endif
+                            <span class="me-1">{{ Auth::user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('users.edit', Auth::user()->id) }}">Edit
+                                    Profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ route('users.index') }}">User List</a>
+                            </li>
                             <li>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                     onclick="event.preventDefault();document.getElementById('logout-form').submit();">Logout</a>

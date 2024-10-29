@@ -4,5 +4,9 @@
 4. Jalankan 'php artisan key:generate'.
 5. Jalankan 'php artisan migrate'.
 6. Jalankan 'php artisan db:seed'.
+7. Jalankan 'php artisan storage:link'.
+8. Ubah konfigurasi FILESYSTEM_DISK di file .env. Berikut kode nya, FILESYSTEM_DISK=public
+9. Jalankan 'composer require intervention/image'.
+10. Buatlah folder original, square, dan thumbnail di direktori public\storage\images\users\ .
 
 jangan lupa "git remote remove origin" agar bisa disimpan di GitHub masing-masing

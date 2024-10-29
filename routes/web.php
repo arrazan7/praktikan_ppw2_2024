@@ -7,6 +7,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\SendEmailController;
+use App\Http\Controllers\UserController;
 
 use App\Http\Middleware\CustomAuthRedirect;
 use App\Http\Middleware\CheckAge;
@@ -62,6 +63,10 @@ Route::middleware([CustomAuthRedirect::class, Admin::class])->group(function () 
     Route::put('/borrowers/{id}', [BorrowerController::class, 'update'])->name('borrowers.update');
     Route::delete('/borrowers/{id}', [BorrowerController::class, 'destroy'])->name('borrowers.destroy');
     Route::get('/borrowers/search', [BorrowerController::class, 'search'])->name('borrowers.search');
+
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 });
 
 Route::get('/send-email', [SendEmailController::class, 'index'])->name('send.email');
