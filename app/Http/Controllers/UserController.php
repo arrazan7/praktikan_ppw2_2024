@@ -136,6 +136,27 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            // Ambil pengguna berdasarkan ID
+            $pengguna = User::findOrFail($id);
+
+            $photoPengguna = $pengguna->photo;
+            $extensionPengguna = $pengguna->photo_ext;
+
+            // Delete data pengguna
+            $hapusPengguna = $pengguna->delete();
+
+            if ($hapusPengguna) {
+                File::delete(public_path() . '/storage/images/users/original/' . $photoPengguna . '_Original.' . $extensionPengguna);
+                File::delete(public_path() . '/storage/images/users/square/' . $photoPengguna . '_Square.' . $extensionPengguna);
+                File::delete(public_path() . '/storage/images/users/thumbnail/' . $photoPengguna . '_Thumbnail.' . $extensionPengguna);
+            }
+
+            // Flash message sukses jika berhasil
+            return redirect()->route('users.index')->with('success', 'User deleted successfully!');
+        } catch (\Exception $e) {
+            // Flash message error jika gagal
+            return redirect()->back()->with('error', 'Failed to delete user: ' . $e->getMessage());
+        }
     }
 }
