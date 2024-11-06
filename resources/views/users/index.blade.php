@@ -22,7 +22,7 @@
                             Not Available
                         @else
                             <img src="{{ asset('storage/images/users/square/' . $pengguna->photo . '_Square.' . $pengguna->photo_ext) }}"
-                                alt="User Photo" width="100">
+                                alt="User Photo" width="200">
                         @endif
                     </td>
                     <td>{{ $pengguna->name }}</td>

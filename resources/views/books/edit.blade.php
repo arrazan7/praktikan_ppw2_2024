@@ -5,7 +5,7 @@
 @section('content')
     <h2 class="text-center mb-4">Edit Book</h2>
 
-    <form action="{{ route('books.update', $buku->id) }}" method="POST">
+    <form action="{{ route('books.update', $buku->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT') <!-- Untuk metode update -->
 
@@ -74,6 +74,15 @@
             <textarea class="form-control" id="description" name="description">{{ old('description', $buku->description) }}</textarea>
             @error('description')
                 <div class="text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="picture" class="form-label">Book Picture</label>
+            <input type="file" class="form-control @error('picture') is-invalid @enderror" id="picture" name="picture"
+                value="{{ old('picture') }}">
+            @error('picture')
+                <span class="text-danger">{{ $message }}</span>
             @enderror
         </div>
 

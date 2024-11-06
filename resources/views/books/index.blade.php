@@ -3,7 +3,8 @@
 @section('title', 'Book List')
 
 @section('content')
-    <h2 class="text-center mb-4">Book List</h2>
+    <h2 class="text-center mb-4">
+        Book List</h2>
     <form action="{{ route('books.search') }}" method="GET">
         @csrf
         <input type="text" name="search" class="form-control mb-2" placeholder="Search Book">
@@ -13,14 +14,9 @@
         <thead class="table-dark">
             <tr>
                 <th>No</th>
-                <th>ID</th>
                 <th>Title</th>
                 <th>Writer</th>
-                <th>Publisher ID</th>
-                <th>Publication Year</th>
-                <th>Number of Pages</th>
-                <th>Price</th>
-                <th>Description</th>
+                <th>Picture</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -28,15 +24,20 @@
             @foreach ($data_buku as $index => $buku)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $buku->id }}</td>
                     <td>{{ $buku->title }}</td>
                     <td>{{ $buku->writer }}</td>
-                    <td>{{ $buku->publisher_id }}</td>
-                    <td>{{ $buku->publication_year }}</td>
-                    <td>{{ $buku->number_of_pages }}</td>
-                    <td>{{ 'Rp. ' . number_format($buku->price, 2, ',', '.') }}</td>
-                    <td>{{ $buku->description }}</td>
                     <td>
+                        @if (is_null($buku->picture))
+                            Not Available
+                        @else
+                            <img src="{{ asset('storage/images/books/' . $buku->picture) }}" alt="Book Picture"
+                                width="300">
+                        @endif
+                    </td>
+                    <td>
+                        <form action="{{ route('books.show', $buku->id) }}">
+                            <button type="submit" class="btn btn-primary">Detail</button>
+                        </form>
                         <form action="{{ route('books.edit', $buku->id) }}">
                             <button type="submit" class="btn btn-warning">Edit</button>
                         </form>

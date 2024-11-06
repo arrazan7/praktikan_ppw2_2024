@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use App\Models\Book;
 use App\Models\Publisher;
 
@@ -15,7 +16,7 @@ class BookController extends Controller
     {
         $batas = 20;
         // Mengambil data buku dengan paginasi
-        $data_buku = Book::paginate($batas);
+        $data_buku = Book::select('id', 'title', 'writer', 'picture')->paginate($batas);
         $jumlah_buku = Book::count(); // Menghitung jumlah total buku di database
         $total_harga_buku = Book::sum('price'); // Menjumlahkan harga semua buku di database
         $no = $batas * ($data_buku->currentPage() - 1);
@@ -60,7 +61,23 @@ class BookController extends Controller
             'number_of_pages' => 'required|integer',
             'price' => 'required|integer',
             'description' => 'required|string',
+            'picture' => 'image|nullable|max:10000', // batas ukuran image 10MB
         ]);
+
+        if ($request->hasFile('picture')) {
+            $filenameWithExt = $request->file('picture')->getClientOriginalName();
+            $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('picture')->getClientOriginalExtension();
+            $filenameDatabase = $filenameWithoutExt . '_' . time() . $extension;
+
+            // Save image
+            $request->file('picture')->storeAs('images/books', $filenameDatabase);
+
+            // Ubah nilai request picture
+            $validatedData['picture'] = $filenameDatabase;
+        } else {
+            $validatedData['picture'] = null;
+        }
 
         try {
             // Simpan buku baru
@@ -79,7 +96,17 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            // Ambil buku berdasarkan ID
+            $buku = Book::findOrFail($id);
+            $penerbit = Publisher::findOrFail($buku->publisher_id);
+
+            // Tampilkan view show dengan data buku
+            return view('books.show', compact('buku', 'penerbit'));
+        } catch (\Exception $e) {
+            // Flash message error jika gagal
+            return redirect()->back()->with('error', 'Failed to show book: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -111,12 +138,37 @@ class BookController extends Controller
             'number_of_pages' => 'required|integer',
             'price' => 'required|integer',
             'description' => 'required|string',
+            'picture' => 'image|nullable|max:10000|mimes:jpg,jpeg,png', // batas ukuran image 10MB
         ]);
 
-        try {
-            // Ambil buku berdasarkan ID
-            $buku = Book::findOrFail($id);
+        // Ambil buku berdasarkan ID
+        $buku = Book::findOrFail($id);
 
+        if ($request->hasFile('picture')) {
+            // Hapus image lama
+            if ($buku->picture != null) {
+                File::delete(public_path() . '/storage/images/books/' . $buku->picture);
+            }
+
+            $filenameWithExt = $request->file('picture')->getClientOriginalName();
+            $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $extension = $request->file('picture')->getClientOriginalExtension();
+            $filenameDatabase = $filenameWithoutExt . '_' . time() . $extension;
+
+            // Save image
+            $request->file('picture')->storeAs('images/books', $filenameDatabase);
+
+            // Ubah nilai request picture
+            $validatedData['picture'] = $filenameDatabase;
+        } else {
+            if ($buku->picture != null) {
+                $validatedData['picture'] = $buku->picture;
+            } else {
+                $validatedData['picture'] = null;
+            }
+        }
+
+        try {
             // Update data buku dengan data yang baru
             $buku->update($validatedData);
 
@@ -137,8 +189,14 @@ class BookController extends Controller
             // Ambil buku berdasarkan ID
             $buku = Book::findOrFail($id);
 
+            $pictureBuku = $buku->picture;
+
             // Delete data buku
-            $buku->delete();
+            $hapusBuku = $buku->delete();
+
+            if ($hapusBuku) {
+                File::delete(public_path() . '/storage/images/books/' . $pictureBuku);
+            }
 
             // Flash message sukses jika berhasil
             return redirect()->route('books.index')->with('success', 'Book deleted successfully!');

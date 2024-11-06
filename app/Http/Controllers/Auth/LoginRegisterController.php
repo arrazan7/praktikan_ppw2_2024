@@ -32,25 +32,25 @@ class LoginRegisterController extends Controller
             $manager = new ImageManager(new Driver());
 
             $filenameWithExt = $request->file('photo')->getClientOriginalName();
-            $path = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('photo')->getClientOriginalExtension();
-            $filename = $path . '_' . time();
+            $filenameModified = $filenameWithoutExt . '_' . time();
 
             // Save original image
-            $filenameOriginal = $filename . '_Original.' . $extension;
+            $filenameOriginal = $filenameModified . '_Original.' . $extension;
             $request->file('photo')->storeAs('images/users/original', $filenameOriginal);
 
             // Create and save square image
             $squareImage = $manager->read($request->file('photo')->path());
             $smallestDimension = min($squareImage->width(), $squareImage->height());
             $squareImage->crop($smallestDimension, $smallestDimension, ($squareImage->width() - $smallestDimension) / 2, ($squareImage->height() - $smallestDimension) / 2);
-            $squareImage->save(storage_path('app/public/images/users/square/' . $filename . '_Square.' . $extension));
+            $squareImage->save(storage_path('app/public/images/users/square/' . $filenameModified . '_Square.' . $extension));
 
             // Create and save thumbnail
             $thumbnailImage = $squareImage->scale(width: 100)->toJpeg();
-            $thumbnailImage->save(storage_path('app/public/images/users/thumbnail/' . $filename . '_Thumbnail.' . $extension));
+            $thumbnailImage->save(storage_path('app/public/images/users/thumbnail/' . $filenameModified . '_Thumbnail.' . $extension));
         } else {
-            $filename = null;
+            $filenameModified = null;
             $extension = null;
         }
 
@@ -59,7 +59,7 @@ class LoginRegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'level' => 'admin', // bisa diubah sesuai kebutuhan. admin atau public,
-            'photo' => $filename,
+            'photo' => $filenameModified,
             'photo_ext' => $extension,
         ]);
 

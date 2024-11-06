@@ -19,6 +19,7 @@ class Book extends Model
         'number_of_pages',
         'price',
         'description',
+        'picture',
     ];
 
     public function borrowers(): HasMany

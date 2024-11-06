@@ -20,6 +20,10 @@
                         <a class="nav-link {{ request()->is('send-email') ? 'active' : '' }}"
                             href="{{ route('send.email') }}">Send Email</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('gallery') ? 'active' : '' }}"
+                            href="{{ route('gallery.index') }}">Book Gallery</a>
+                    </li>
                 @else
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex flex-row align-items-center" href="#" role="button"

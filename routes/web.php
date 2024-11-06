@@ -8,6 +8,7 @@ use App\Http\Controllers\BorrowerController;
 use App\Http\Controllers\Auth\LoginRegisterController;
 use App\Http\Controllers\SendEmailController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\GalleryController;
 
 use App\Http\Middleware\CustomAuthRedirect;
 use App\Http\Middleware\CheckAge;
@@ -43,6 +44,7 @@ Route::middleware([CustomAuthRedirect::class, Admin::class])->group(function () 
     Route::get('/books', [BookController::class, 'index'])->name('books.index');
     Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
     Route::post('/books', [BookController::class, 'store'])->name('books.store');
+    Route::get('/books/show/{id}', [BookController::class, 'show'])->name('books.show');
     Route::get('/books/edit/{id}', [BookController::class, 'edit'])->name('books.edit');
     Route::put('/books/{id}', [BookController::class, 'update'])->name('books.update');
     Route::delete('/books/{id}', [BookController::class, 'destroy'])->name('books.destroy');
@@ -68,6 +70,8 @@ Route::middleware([CustomAuthRedirect::class, Admin::class])->group(function () 
     Route::get('/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 });
+
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
 
 Route::get('/send-email', [SendEmailController::class, 'index'])->name('send.email');
 Route::post('/post-email', [SendEmailController::class, 'store'])->name('post.email');
