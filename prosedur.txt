@@ -8,5 +8,7 @@
 8. Ubah konfigurasi FILESYSTEM_DISK di file .env. Berikut kode nya, FILESYSTEM_DISK=public
 9. Jalankan 'composer require intervention/image'.
 10. Buatlah folder original, square, dan thumbnail di direktori public\storage\images\users\ .
+11. Jalankan 'composer require "darkaonline/l5-swagger"'.
+12. Tambahkan baris kode berikut 'L5_SWAGGER_GENERATE_ALWAYS=true' di file .env .
 
 jangan lupa "git remote remove origin" agar bisa disimpan di GitHub masing-masing

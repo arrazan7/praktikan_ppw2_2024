@@ -1,0 +1,682 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Book Management API",
+        "description": "API untuk mengelola buku, termasuk CRUD dan pencarian",
+        "contact": {
+            "email": "admin@yourdomain.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/books": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get list of books with pagination",
+                "description": "Mengambil daftar buku dengan paginasi, total jumlah buku, dan total harga buku",
+                "operationId": "03f0d4373f8a3c94cd205dc52ec0f4ae",
+                "responses": {
+                    "200": {
+                        "description": "Sukses mendapatkan data buku",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "The Great Gatsby"
+                                                    },
+                                                    "writer": {
+                                                        "type": "string",
+                                                        "example": "F. Scott Fitzgerald"
+                                                    },
+                                                    "picture": {
+                                                        "type": "string",
+                                                        "example": "image_url.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total_books": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "total_price": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 500000
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_pages": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Create a new book",
+                "description": "Create a new book with title, writer, and other details",
+                "operationId": "storeBook",
+                "requestBody": {
+                    "description": "Data untuk membuat buku baru",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Judul buku",
+                                        "type": "string"
+                                    },
+                                    "writer": {
+                                        "description": "Penulis buku",
+                                        "type": "string"
+                                    },
+                                    "publisher_id": {
+                                        "description": "ID penerbit",
+                                        "type": "integer"
+                                    },
+                                    "publication_year": {
+                                        "description": "Tahun publikasi buku",
+                                        "type": "integer"
+                                    },
+                                    "number_of_pages": {
+                                        "description": "Jumlah halaman buku",
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "description": "Harga buku",
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "description": "Deskripsi buku",
+                                        "type": "string"
+                                    },
+                                    "picture": {
+                                        "description": "File gambar buku",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Buku berhasil dibuat",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Buku berhasil dibuat!"
+                                        },
+                                        "book": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Contoh Buku"
+                                                },
+                                                "writer": {
+                                                    "type": "string",
+                                                    "example": "Nama Penulis"
+                                                },
+                                                "publisher_id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "publication_year": {
+                                                    "type": "integer",
+                                                    "example": 2020
+                                                },
+                                                "number_of_pages": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                },
+                                                "price": {
+                                                    "type": "integer",
+                                                    "example": 50000
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Ini adalah buku contoh."
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "image_123.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Request tidak valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Request tidak valid"
+                                        },
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Kesalahan dalam data yang dikirim"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/books/search": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Search books by title or writer",
+                "description": "Mencari buku berdasarkan judul atau penulis, dengan paginasi dan informasi terkait jumlah buku dan total harga",
+                "operationId": "84b4512fd395516738ac43eec3239c25",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Kata kunci pencarian untuk mencari buku berdasarkan judul atau penulis",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "The Great Gatsby"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Sukses mendapatkan hasil pencarian buku",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "The Great Gatsby"
+                                                    },
+                                                    "writer": {
+                                                        "type": "string",
+                                                        "example": "F. Scott Fitzgerald"
+                                                    },
+                                                    "picture": {
+                                                        "type": "string",
+                                                        "example": "image_url.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total_books": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "total_price": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 500000
+                                        },
+                                        "pagination": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 20
+                                                },
+                                                "total_pages": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "total_items": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/books/{id}": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get details of a specific book",
+                "description": "Retrieve a book by its ID along with its publisher information",
+                "operationId": "showBook",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the book",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Details of the requested book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "book": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "example": "Contoh Buku"
+                                                },
+                                                "writer": {
+                                                    "type": "string",
+                                                    "example": "Nama Penulis"
+                                                },
+                                                "publisher_id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "publication_year": {
+                                                    "type": "integer",
+                                                    "example": 2020
+                                                },
+                                                "number_of_pages": {
+                                                    "type": "integer",
+                                                    "example": 300
+                                                },
+                                                "price": {
+                                                    "type": "integer",
+                                                    "example": 50000
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Ini adalah buku contoh."
+                                                },
+                                                "picture": {
+                                                    "type": "string",
+                                                    "example": "image_123.jpg"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "publisher": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 123
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Penerbit XYZ"
+                                                },
+                                                "address": {
+                                                    "type": "string",
+                                                    "example": "Jl. Penerbit No. 10"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Buku tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Update a specific book",
+                "description": "Update the details of a book by its ID, including optional image upload",
+                "operationId": "updateBook",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the book to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data to update the book including image upload (optional)",
+                    "required": true,
+                    "content": {
+                        "multipart/x-www-form-urlencoded": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Judul buku",
+                                        "type": "string"
+                                    },
+                                    "writer": {
+                                        "description": "Penulis buku",
+                                        "type": "string"
+                                    },
+                                    "publisher_id": {
+                                        "description": "ID penerbit",
+                                        "type": "integer"
+                                    },
+                                    "publication_year": {
+                                        "description": "Tahun publikasi buku",
+                                        "type": "integer"
+                                    },
+                                    "number_of_pages": {
+                                        "description": "Jumlah halaman buku",
+                                        "type": "integer"
+                                    },
+                                    "price": {
+                                        "description": "Harga buku",
+                                        "type": "integer"
+                                    },
+                                    "description": {
+                                        "description": "Deskripsi buku",
+                                        "type": "string"
+                                    },
+                                    "picture": {
+                                        "description": "File gambar buku",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Book successfully updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book updated successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Book not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Buku tidak ditemukan"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid data provided",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid input data"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Delete a specific book",
+                "description": "Delete a book by its ID, along with its image file if exists",
+                "operationId": "deleteBook",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of the book to delete",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Book successfully deleted",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book deleted successfully!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Failed to delete book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to delete book: error message"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/greet": {
+            "get": {
+                "tags": [
+                    "greeting"
+                ],
+                "summary": "Returns a Sample API response",
+                "description": "A sample greeting to test out the API",
+                "operationId": "greet",
+                "parameters": [
+                    {
+                        "name": "firstname",
+                        "in": "query",
+                        "description": "nama depan",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "lastname",
+                        "in": "query",
+                        "description": "nama belakang",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "example": {
+                                    "success": true,
+                                    "message": "Berhasil memproses masukan user",
+                                    "data": {
+                                        "output": "Hello John Doe",
+                                        "firstname": "John",
+                                        "lastname": "Doe"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Books",
+            "description": "Books"
+        },
+        {
+            "name": "greeting",
+            "description": "greeting"
+        }
+    ]
+}
