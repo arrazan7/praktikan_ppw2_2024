@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 use App\Models\Book;
 use App\Models\Publisher;
 use Illuminate\Support\Facades\Log;
+
 /**
  * @OA\Info(
  *   title="Book Management API",
@@ -29,7 +30,14 @@ class BookControllerAPI extends Controller
      *     tags={"Books"},
      *     summary="Get list of books with pagination",
      *     description="Mengambil daftar buku dengan paginasi, total jumlah buku, dan total harga buku",
-     *     @OA\Response(
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     required=true,
+     *     description="Paginasi halaman",
+     *     @OA\Schema(type="integer", example="1")
+     * ),    
+     * @OA\Response(
      *         response=200,
      *         description="Sukses mendapatkan data buku",
      *         @OA\JsonContent(
@@ -73,33 +81,99 @@ class BookControllerAPI extends Controller
      *     )
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
+        // $batas = 20;
+
+        // // Mengambil data buku dengan paginasi
+        // $data_buku = Book::select('id', 'title', 'writer', 'picture')->paginate($batas);
+
+        // // Menghitung jumlah total buku di database
+        // $jumlah_buku = Book::count();
+
+        // // Menjumlahkan harga semua buku di database
+        // $total_harga_buku = Book::sum('price');
+
+        // // Menentukan nomor urut berdasarkan halaman saat ini
+        // $no = $batas * ($data_buku->currentPage() - 1);
+
+        // // Mereturn respons dalam format JSON
+        // return response()->json([
+        //     'data' => $data_buku,
+        //     'total_books' => $jumlah_buku,
+        //     'total_price' => $total_harga_buku,
+        //     'pagination' => [
+        //         'current_page' => $data_buku->currentPage(),
+        //         'per_page' => $batas,
+        //         'total_pages' => $data_buku->lastPage(),
+        //         'total_items' => $data_buku->total(),
+        //     ]
+        // ], 200);
         $batas = 20;
 
         // Mengambil data buku dengan paginasi
         $data_buku = Book::select('id', 'title', 'writer', 'picture')->paginate($batas);
 
-        // Menghitung jumlah total buku di database
-        $jumlah_buku = Book::count();
-
-        // Menjumlahkan harga semua buku di database
-        $total_harga_buku = Book::sum('price');
-
-        // Menentukan nomor urut berdasarkan halaman saat ini
-        $no = $batas * ($data_buku->currentPage() - 1);
-
         // Mereturn respons dalam format JSON
         return response()->json([
             'data' => $data_buku,
-            'total_books' => $jumlah_buku,
-            'total_price' => $total_harga_buku,
-            'pagination' => [
-                'current_page' => $data_buku->currentPage(),
-                'per_page' => $batas,
-                'total_pages' => $data_buku->lastPage(),
-                'total_items' => $data_buku->total(),
-            ]
+            'total_books' => Book::count(),
+            'total_price' => Book::sum('price'),
+        ], 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    /**
+     * @OA\Get(
+     *     path="/api/books/all",
+     *     tags={"Books"},
+     *     summary="Get list of books",
+     *     description="Mengambil daftar buku, total jumlah buku, dan total harga buku",   
+     * @OA\Response(
+     *         response=200,
+     *         description="Sukses mendapatkan data buku",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             properties={
+     *                 @OA\Property(
+     *                     property="data",
+     *                     type="array",
+     *                     @OA\Items(
+     *                         type="object",
+     *                         properties={
+     *                             @OA\Property(property="id", type="integer", example=1),
+     *                             @OA\Property(property="title", type="string", example="The Great Gatsby"),
+     *                             @OA\Property(property="writer", type="string", example="F. Scott Fitzgerald"),
+     *                             @OA\Property(property="picture", type="string", example="image_url.jpg")
+     *                         }
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="total_books", type="integer", example=100),
+     *                 @OA\Property(property="total_price", type="number", format="float", example=500000),
+     *             }
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal server error",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Internal server error")
+     *         )
+     *     )
+     * )
+     */
+    public function all()
+    {
+        $data_buku = Book::select('id', 'title', 'writer', 'picture')->get();
+
+        // Mereturn respons dalam format JSON
+        return response()->json([
+            'status' => true,
+            'message' => "Berhasil mendapatkan semua buku",
+            'data' => $data_buku,
         ], 200);
     }
 
@@ -164,12 +238,12 @@ class BookControllerAPI extends Controller
     {
         $batas = 2000;
         $search = $request->input('search');
-        
+
         // Mengambil data buku dengan paginasi
         $data_buku = Book::where('title', 'like', '%' . $search . '%')
             ->orWhere('writer', 'like', '%' . $search . '%')
             ->paginate($batas);
-        
+
         $jumlah_buku = Book::count(); // Menghitung jumlah total buku di database
         $total_harga_buku = Book::sum('price'); // Menjumlahkan harga semua buku di database
         $no = $batas * ($data_buku->currentPage() - 1);
@@ -631,7 +705,6 @@ class BookControllerAPI extends Controller
             return response()->json([
                 'message' => 'Book deleted successfully!'
             ], 200);
-
         } catch (\Exception $e) {
             // Kembalikan respons error dalam format JSON
             return response()->json([

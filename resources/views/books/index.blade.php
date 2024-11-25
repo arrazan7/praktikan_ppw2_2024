@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($data_buku as $index => $buku)
+            {{-- @foreach ($data_buku as $index => $buku)
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $buku->title }}</td>
@@ -49,22 +49,142 @@
                         </form>
                     </td>
                 </tr>
-            @endforeach
+            @endforeach --}}
+
+            <!-- Konten akan diisi oleh script -->
         </tbody>
     </table>
 
     <!-- Tampilkan pagination links -->
-    <div class="d-flex justify-content-center">
-        {{ $data_buku->links() }}
-    </div>
+    <div class="d-flex justify-content-center pagination-container"></div>
+
 
     <!-- Menampilkan jumlah buku dan total harga -->
     <div class="row mt-3">
         <div class="col-md-6">
-            <p><strong>Total Books:</strong> {{ $jumlah_buku }}</p>
+            <p><strong>Total Books:</strong> <span id="total-books"></span></p>
         </div>
         <div class="col-md-6 text-end">
-            <p><strong>Total Price:</strong> {{ 'Rp. ' . number_format($total_harga_buku, 2, ',', '.') }}</p>
+            <p><strong>Total Price:</strong> <span id="total-price"></span></p>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const apiUrl = "http://127.0.0.1:8000/api/books";
+            const tableBody = document.querySelector("table tbody");
+            const paginationContainer = document.querySelector(".pagination-container");
+            const totalBooksElement = document.getElementById("total-books");
+            const totalPriceElement = document.getElementById("total-price");
+    
+            let currentPage = 1;
+    
+            const fetchBooks = (page = 1) => {
+                fetch(`${apiUrl}?page=${page}`)
+                    .then((response) => response.json())
+                    .then((data) => {
+                        populateTable(data.data.data);
+                        updatePagination(data.data);
+                        updateTotals(data.total_books, data.total_price);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching data:", error);
+                    });
+            };
+    
+            const populateTable = (books) => {
+                tableBody.innerHTML = ""; // Clear previous rows
+                books.forEach((book, index) => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${book.title}</td>
+                        <td>${book.writer}</td>
+                        <td>
+                            ${
+                                book.picture
+                                    ? `<img src="/storage/images/books/${book.picture}" alt="Book Picture" width="300">`
+                                    : "Not Available"
+                            }
+                        </td>
+                        <td>
+                            <form action="/books/show/${book.id}">
+                                <button type="submit" class="btn btn-primary">Detail</button>
+                            </form>
+                            <form action="/books/edit/${book.id}">
+                                <button type="submit" class="btn btn-warning">Edit</button>
+                            </form>
+                            <form action="/books/${book.id}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button onclick="return confirm('Yakin mau dihapus?')" type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            };
+    
+            const updatePagination = (paginationData) => {
+                paginationContainer.innerHTML = ""; // Clear previous pagination links
+    
+                const createPageLink = (url, label, isActive = false, isDisabled = false) => {
+                    const link = document.createElement("button");
+                    link.className = `btn ${isActive ? "btn-primary" : "btn-outline-primary"} mx-1`;
+                    link.disabled = isDisabled;
+                    link.textContent = label;
+                    if (url) {
+                        link.addEventListener("click", () => {
+                            currentPage = new URL(url).searchParams.get("page");
+                            fetchBooks(currentPage);
+                        });
+                    }
+                    return link;
+                };
+    
+                // Previous button
+                paginationContainer.appendChild(
+                    createPageLink(
+                        paginationData.prev_page_url,
+                        "« Previous",
+                        false,
+                        paginationData.prev_page_url === null
+                    )
+                );
+    
+                // Page links
+                for (let page = 1; page <= paginationData.last_page; page++) {
+                    paginationContainer.appendChild(
+                        createPageLink(
+                            `${apiUrl}?page=${page}`,
+                            page,
+                            page === paginationData.current_page
+                        )
+                    );
+                }
+    
+                // Next button
+                paginationContainer.appendChild(
+                    createPageLink(
+                        paginationData.next_page_url,
+                        "Next »",
+                        false,
+                        paginationData.next_page_url === null
+                    )
+                );
+            };
+    
+            const updateTotals = (totalBooks, totalPrice) => {
+                totalBooksElement.textContent = totalBooks;
+                totalPriceElement.textContent = `Rp. ${parseFloat(totalPrice).toLocaleString("id-ID", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })}`;
+            };
+    
+            // Initial fetch
+            fetchBooks(currentPage);
+        });
+    </script>
+    
 @endsection

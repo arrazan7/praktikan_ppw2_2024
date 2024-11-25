@@ -17,6 +17,18 @@
                 "summary": "Get list of books with pagination",
                 "description": "Mengambil daftar buku dengan paginasi, total jumlah buku, dan total harga buku",
                 "operationId": "03f0d4373f8a3c94cd205dc52ec0f4ae",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Paginasi halaman",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": "1"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Sukses mendapatkan data buku",
@@ -226,6 +238,79 @@
                                         "error": {
                                             "type": "string",
                                             "example": "Kesalahan dalam data yang dikirim"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/books/all": {
+            "get": {
+                "tags": [
+                    "Books"
+                ],
+                "summary": "Get list of books",
+                "description": "Mengambil daftar buku, total jumlah buku, dan total harga buku",
+                "operationId": "5b142ad9b509094f21311fdf1fd249fd",
+                "responses": {
+                    "200": {
+                        "description": "Sukses mendapatkan data buku",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "The Great Gatsby"
+                                                    },
+                                                    "writer": {
+                                                        "type": "string",
+                                                        "example": "F. Scott Fitzgerald"
+                                                    },
+                                                    "picture": {
+                                                        "type": "string",
+                                                        "example": "image_url.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total_books": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "total_price": {
+                                            "type": "number",
+                                            "format": "float",
+                                            "example": 500000
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
                                         }
                                     },
                                     "type": "object"
@@ -472,7 +557,7 @@
                     "description": "Data to update the book including image upload (optional)",
                     "required": true,
                     "content": {
-                        "multipart/x-www-form-urlencoded": {
+                        "multipart/form-data": {
                             "schema": {
                                 "properties": {
                                     "title": {
@@ -619,10 +704,82 @@
                 }
             }
         },
+        "/api/gallery": {
+            "get": {
+                "tags": [
+                    "Gallery"
+                ],
+                "summary": "Get list of books pictured",
+                "description": "Mengambil daftar buku yang ada gambar",
+                "operationId": "af4ad61ff5dd79bab67bb1c4c3e7f250",
+                "responses": {
+                    "200": {
+                        "description": "Sukses mendapatkan data buku",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Berhasil mendapatkan semua buku"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "title": {
+                                                        "type": "string",
+                                                        "example": "The Great Gatsby"
+                                                    },
+                                                    "writer": {
+                                                        "type": "string",
+                                                        "example": "F. Scott Fitzgerald"
+                                                    },
+                                                    "picture": {
+                                                        "type": "string",
+                                                        "example": "image_url.jpg"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Internal server error"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/greet": {
             "get": {
                 "tags": [
-                    "greeting"
+                    "Greeting"
                 ],
                 "summary": "Returns a Sample API response",
                 "description": "A sample greeting to test out the API",
@@ -675,8 +832,12 @@
             "description": "Books"
         },
         {
-            "name": "greeting",
-            "description": "greeting"
+            "name": "Gallery",
+            "description": "Gallery"
+        },
+        {
+            "name": "Greeting",
+            "description": "Greeting"
         }
     ]
 }

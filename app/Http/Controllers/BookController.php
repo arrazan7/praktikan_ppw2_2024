@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 use App\Models\Book;
 use App\Models\Publisher;
 
@@ -12,16 +13,15 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $batas = 20;
         // Mengambil data buku dengan paginasi
         $data_buku = Book::select('id', 'title', 'writer', 'picture')->paginate($batas);
         $jumlah_buku = Book::count(); // Menghitung jumlah total buku di database
         $total_harga_buku = Book::sum('price'); // Menjumlahkan harga semua buku di database
-        $no = $batas * ($data_buku->currentPage() - 1);
 
-        return view('books.index', compact('data_buku', 'jumlah_buku', 'total_harga_buku', 'no'));
+        return view('books.index', compact('data_buku', 'jumlah_buku', 'total_harga_buku'));
     }
 
     public function search(Request $request)
