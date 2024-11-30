@@ -68,7 +68,7 @@ class BookController extends Controller
             $filenameWithExt = $request->file('picture')->getClientOriginalName();
             $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('picture')->getClientOriginalExtension();
-            $filenameDatabase = $filenameWithoutExt . '_' . time() . $extension;
+            $filenameDatabase = $filenameWithoutExt . '_' . time() . '.' . $extension;
 
             // Save image
             $request->file('picture')->storeAs('images/books', $filenameDatabase);
@@ -153,7 +153,7 @@ class BookController extends Controller
             $filenameWithExt = $request->file('picture')->getClientOriginalName();
             $filenameWithoutExt = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             $extension = $request->file('picture')->getClientOriginalExtension();
-            $filenameDatabase = $filenameWithoutExt . '_' . time() . $extension;
+            $filenameDatabase = $filenameWithoutExt . '_' . time() . '.' . $extension;
 
             // Save image
             $request->file('picture')->storeAs('images/books', $filenameDatabase);
